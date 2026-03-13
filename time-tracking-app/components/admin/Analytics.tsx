@@ -22,6 +22,14 @@ interface Employee {
   name: string;
 }
 
+function formatSecondsToTime(totalSeconds: number) {
+  const safeSeconds = Math.max(totalSeconds, 0);
+  const h = Math.floor(safeSeconds / 3600);
+  const m = Math.floor((safeSeconds % 3600) / 60);
+  const s = safeSeconds % 60;
+  return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+}
+
 export default function Analytics() {
   const { resolvedTheme } = useTheme();
   const [logs, setLogs] = useState<Log[]>([]);
@@ -209,7 +217,9 @@ export default function Analytics() {
                 <th className="p-4 font-semibold text-slate-600 dark:text-slate-200">Date</th>
                 <th className="p-4 font-semibold text-slate-600 dark:text-slate-200">Main Task</th>
                 <th className="p-4 font-semibold text-slate-600 dark:text-slate-200">Start Time</th>
+                <th className="p-4 font-semibold text-slate-600 dark:text-slate-200">End Time</th>
                 <th className="p-4 font-semibold text-slate-600 dark:text-slate-200">Duration</th>
+                <th className="p-4 font-semibold text-slate-600 dark:text-slate-200">Useful Duration</th>
                 <th className="p-4 font-semibold text-slate-600 dark:text-slate-200">Secondary Tasks</th>
                 <th className="p-4 font-semibold text-slate-600 dark:text-slate-200">Description</th>
               </tr>
@@ -229,7 +239,23 @@ export default function Analytics() {
                     {format(parseISO(log.startTime), "HH:mm")}
                   </td>
                   <td className="p-4 text-slate-700 dark:text-slate-300">
+                    {format(parseISO(log.endTime), "HH:mm")}
+                  </td>
+                  <td className="p-4 text-slate-700 dark:text-slate-300">
                     {log.durationMinutes} min
+                  </td>
+                  <td className="p-4 text-slate-700 dark:text-slate-300 font-mono">
+                    {(() => {
+                      const totalSeconds = Math.max(
+                        Math.floor((parseISO(log.endTime).getTime() - parseISO(log.startTime).getTime()) / 1000),
+                        0
+                      );
+                      const secondarySeconds = (log.secondaryTasks ?? []).reduce(
+                        (sum, st) => sum + ((Number(st.minutes) || 0) * 60),
+                        0
+                      );
+                      return formatSecondsToTime(Math.max(totalSeconds - secondarySeconds, 0));
+                    })()}
                   </td>
                   <td className="p-4">
                     {log.secondaryTasks && log.secondaryTasks.length > 0 ? (
@@ -252,7 +278,7 @@ export default function Analytics() {
               ))}
               {logs.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="p-8 text-center text-slate-500 dark:text-slate-400">
+                  <td colSpan={8} className="p-8 text-center text-slate-500 dark:text-slate-400">
                     No logs found for selected criteria
                   </td>
                 </tr>

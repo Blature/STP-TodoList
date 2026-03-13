@@ -29,10 +29,12 @@ function formatDate(date: Date) {
   return format(date, "yyyy-MM-dd");
 }
 
-function formatDuration(minutes: number) {
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:00`;
+function formatDuration(totalSeconds: number) {
+  const safeSeconds = Math.max(totalSeconds, 0);
+  const h = Math.floor(safeSeconds / 3600);
+  const m = Math.floor((safeSeconds % 3600) / 60);
+  const s = safeSeconds % 60;
+  return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
 }
 
 export async function POST(request: Request) {
@@ -62,6 +64,7 @@ export async function POST(request: Request) {
     const startTime = activeSession.startTime;
     const totalMs = endTime.getTime() - startTime.getTime();
     const totalMinutes = Math.max(Math.floor(totalMs / 60000), 1);
+    const totalSeconds = Math.max(Math.floor(totalMs / 1000), 1);
 
     // Calculate secondary tasks duration
     const secTasksRaw: SecondaryTaskInput[] = Array.isArray(secondaryTasks) ? secondaryTasks : [];
@@ -70,8 +73,8 @@ export async function POST(request: Request) {
       minutes: parseInt(String(task.minutes), 10) || 0,
       description: task.description ?? null
     }));
-    const secTotal = secTasks.reduce((sum, t) => sum + t.minutes, 0);
-    const primaryMinutes = Math.max(totalMinutes - secTotal, 1);
+    const secTotalSeconds = secTasks.reduce((sum, t) => sum + (t.minutes * 60), 0);
+    const primarySeconds = Math.max(totalSeconds - secTotalSeconds, 0);
 
     // Create WorkLog
     const workLog = workLogRepo.create();
@@ -100,7 +103,7 @@ export async function POST(request: Request) {
     const dayStr = getDayName(startTime);
     const startTimeStr = formatTime(startTime);
     const endTimeStr = formatTime(endTime);
-    const durationStr = formatDuration(primaryMinutes);
+    const durationStr = formatDuration(primarySeconds);
 
     // Main Task Row
     rows.push([
@@ -114,21 +117,6 @@ export async function POST(request: Request) {
       totalCalls || "",
       answeredCalls || ""
     ]);
-
-    // Secondary Tasks Rows
-    secTasks.forEach((t) => {
-      rows.push([
-        dateStr,
-        dayStr,
-        t.type,
-        "", // Start Time (unknown for secondary)
-        "", // End Time (unknown for secondary)
-        formatDuration(t.minutes), // Formatted Duration for secondary
-        t.description || "",
-        "", // Total Calls (N/A for secondary usually)
-        ""  // Answered Calls (N/A for secondary usually)
-      ]);
-    });
 
     // Send to Google Sheets
     let sheetSuccess = false;
