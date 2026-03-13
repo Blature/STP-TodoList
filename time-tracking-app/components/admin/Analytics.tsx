@@ -10,7 +10,10 @@ interface Log {
   id: string;
   durationMinutes: number;
   startTime: string;
+  endTime: string;
   mainTask: { name: string };
+  secondaryTasks: { type: string; minutes: number; description?: string }[] | null;
+  description: string | null;
 }
 
 interface Employee {
@@ -93,11 +96,11 @@ export default function Analytics() {
   return (
     <div className="space-y-8">
       {/* Filters */}
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow flex flex-wrap gap-4 items-end">
+      <div className="bg-white dark:bg-navy-800 p-6 rounded-lg shadow border dark:border-navy-700 flex flex-wrap gap-4 items-end">
         <div>
-          <label className="block text-sm font-medium mb-1 dark:text-gray-300">Employee</label>
+          <label className="block text-sm font-medium mb-1 dark:text-navy-light">Employee</label>
           <select
-            className="p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            className="p-2 border rounded dark:bg-navy-900 dark:border-navy-700 dark:text-white"
             value={selectedEmployee}
             onChange={(e) => setSelectedEmployee(e.target.value)}
           >
@@ -108,77 +111,144 @@ export default function Analytics() {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1 dark:text-gray-300">Start Date</label>
+          <label className="block text-sm font-medium mb-1 dark:text-navy-light">Start Date</label>
           <input
             type="date"
-            className="p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            className="p-2 border rounded dark:bg-navy-900 dark:border-navy-700 dark:text-white"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1 dark:text-gray-300">End Date</label>
+          <label className="block text-sm font-medium mb-1 dark:text-navy-light">End Date</label>
           <input
             type="date"
-            className="p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            className="p-2 border rounded dark:bg-navy-900 dark:border-navy-700 dark:text-white"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
           />
         </div>
-        <div className="ml-auto">
-          <div className="text-right">
-            <span className="text-sm text-gray-500 dark:text-gray-400">Total Hours</span>
-            <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-              {totalHours.toFixed(1)} h
-            </div>
-          </div>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white dark:bg-navy-800 p-6 rounded-lg shadow border dark:border-navy-700">
+          <h3 className="text-gray-500 dark:text-muted text-sm uppercase">Total Hours</h3>
+          <p className="text-3xl font-bold dark:text-navy-light">{totalHours.toFixed(1)}h</p>
+        </div>
+        <div className="bg-white dark:bg-navy-800 p-6 rounded-lg shadow border dark:border-navy-700">
+           <h3 className="text-gray-500 dark:text-muted text-sm uppercase">Total Tasks</h3>
+           <p className="text-3xl font-bold dark:text-navy-light">{logs.length}</p>
         </div>
       </div>
 
-      {loading ? (
-        <div className="text-center py-10">Loading Analytics...</div>
-      ) : (
-        <div className="grid md:grid-cols-2 gap-8">
-          {/* Task Distribution */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow h-96">
-            <h3 className="text-lg font-bold mb-4 dark:text-white">Task Distribution (Minutes)</h3>
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Daily Timeline */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow h-96">
-            <h3 className="text-lg font-bold mb-4 dark:text-white">Daily Work Hours</h3>
+      {/* Charts */}
+      <div className="grid md:grid-cols-2 gap-8">
+        <div className="bg-white dark:bg-navy-800 p-6 rounded-lg shadow border dark:border-navy-700">
+          <h3 className="text-lg font-bold mb-4 dark:text-navy-light">Hours per Day</h3>
+          <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={barData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis />
                 <Tooltip />
-                <Legend />
-                <Bar dataKey="hours" fill="#8884d8" name="Hours" />
+                <Bar dataKey="hours" fill="#e63946" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
-      )}
+
+        <div className="bg-white dark:bg-navy-800 p-6 rounded-lg shadow border dark:border-navy-700">
+          <h3 className="text-lg font-bold mb-4 dark:text-navy-light">Task Distribution</h3>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                  label
+                >
+                  {pieData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
+      {/* Detailed Logs Table */}
+      <div className="bg-white dark:bg-navy-800 rounded-lg shadow border dark:border-navy-700 overflow-hidden">
+        <div className="p-6 border-b dark:border-navy-700">
+          <h3 className="text-lg font-bold dark:text-navy-light">Detailed Logs</h3>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead className="bg-gray-50 dark:bg-navy-900">
+              <tr>
+                <th className="p-4 font-semibold text-gray-600 dark:text-navy-light">Date</th>
+                <th className="p-4 font-semibold text-gray-600 dark:text-navy-light">Main Task</th>
+                <th className="p-4 font-semibold text-gray-600 dark:text-navy-light">Start Time</th>
+                <th className="p-4 font-semibold text-gray-600 dark:text-navy-light">Duration</th>
+                <th className="p-4 font-semibold text-gray-600 dark:text-navy-light">Secondary Tasks</th>
+                <th className="p-4 font-semibold text-gray-600 dark:text-navy-light">Description</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 dark:divide-navy-700">
+              {logs.map((log) => (
+                <tr key={log.id} className="hover:bg-gray-50 dark:hover:bg-navy-900/50">
+                  <td className="p-4 dark:text-gray-300">
+                    {format(parseISO(log.startTime), "yyyy-MM-dd")}
+                  </td>
+                  <td className="p-4 dark:text-gray-300">
+                    <span className="font-medium text-navy-800 dark:text-white">
+                      {log.mainTask?.name}
+                    </span>
+                  </td>
+                  <td className="p-4 dark:text-gray-300">
+                    {format(parseISO(log.startTime), "HH:mm")}
+                  </td>
+                  <td className="p-4 dark:text-gray-300">
+                    {log.durationMinutes} min
+                  </td>
+                  <td className="p-4">
+                    {log.secondaryTasks && log.secondaryTasks.length > 0 ? (
+                      <div className="space-y-1">
+                        {log.secondaryTasks.map((st, i) => (
+                          <div key={i} className="text-xs bg-gray-100 dark:bg-navy-900 dark:text-gray-300 p-1 rounded border dark:border-navy-700">
+                            <span className="font-bold text-red-500">{st.type}</span>: {st.minutes}m
+                            {st.description && <span className="italic text-gray-500 ml-1">({st.description})</span>}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-gray-400 text-sm">-</span>
+                    )}
+                  </td>
+                  <td className="p-4 dark:text-gray-300 text-sm max-w-xs truncate" title={log.description || ""}>
+                    {log.description || "-"}
+                  </td>
+                </tr>
+              ))}
+              {logs.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="p-8 text-center text-gray-500 dark:text-muted">
+                    No logs found for selected criteria
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
