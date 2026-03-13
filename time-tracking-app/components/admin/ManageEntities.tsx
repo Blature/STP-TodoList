@@ -96,30 +96,30 @@ export default function ManageEntities() {
   return (
     <div className="grid md:grid-cols-2 gap-8">
       {/* Employees */}
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-        <h3 className="text-xl font-bold mb-4 dark:text-white">Employees</h3>
+      <div className="bg-slate-50 dark:bg-slate-900 p-6 rounded-lg shadow border border-slate-200 dark:border-slate-800 transition-colors duration-300">
+        <h3 className="text-xl font-bold mb-4 text-slate-900 dark:text-white">Employees</h3>
         <div className="flex gap-2 mb-4">
           <input
             type="text"
             placeholder="New Employee Name"
-            className="flex-1 p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            className="flex-1 p-2 border rounded border-slate-200 dark:bg-slate-950 dark:border-slate-800 dark:text-slate-100"
             value={newEmpName}
             onChange={(e) => setNewEmpName(e.target.value)}
           />
           <button
             onClick={addEmployee}
-            className="bg-indigo-600 text-white p-2 rounded hover:bg-indigo-700"
+            className="bg-red-600 text-white p-2 rounded hover:bg-red-700"
           >
             <Plus className="w-5 h-5" />
           </button>
         </div>
         <ul className="space-y-2 max-h-60 overflow-y-auto">
           {employees.map((emp) => (
-            <li key={emp.id} className="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded">
-              <span className="dark:text-gray-200">{emp.name}</span>
+            <li key={emp.id} className="flex justify-between items-center p-2 bg-slate-50 dark:bg-slate-950 rounded border border-slate-200 dark:border-slate-800">
+              <span className="text-slate-800 dark:text-slate-200">{emp.name}</span>
               <button
                 onClick={() => deleteEmployee(emp.id)}
-                className="text-red-500 hover:text-red-700"
+                className="text-red-600 hover:text-red-700"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -129,18 +129,18 @@ export default function ManageEntities() {
       </div>
 
       {/* Tasks */}
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-        <h3 className="text-xl font-bold mb-4 dark:text-white">Tasks</h3>
+      <div className="bg-slate-50 dark:bg-slate-900 p-6 rounded-lg shadow border border-slate-200 dark:border-slate-800 transition-colors duration-300">
+        <h3 className="text-xl font-bold mb-4 text-slate-900 dark:text-white">Tasks</h3>
         <div className="flex gap-2 mb-4">
           <input
             type="text"
             placeholder="New Task Name"
-            className="flex-1 p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            className="flex-1 p-2 border rounded border-slate-200 dark:bg-slate-950 dark:border-slate-800 dark:text-slate-100"
             value={newTaskName}
             onChange={(e) => setNewTaskName(e.target.value)}
           />
           <select
-            className="p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            className="p-2 border rounded border-slate-200 dark:bg-slate-950 dark:border-slate-800 dark:text-slate-100"
             value={newTaskType}
             onChange={(e) => setNewTaskType(e.target.value)}
           >
@@ -149,21 +149,21 @@ export default function ManageEntities() {
           </select>
           <button
             onClick={addTask}
-            className="bg-indigo-600 text-white p-2 rounded hover:bg-indigo-700"
+            className="bg-red-600 text-white p-2 rounded hover:bg-red-700"
           >
             <Plus className="w-5 h-5" />
           </button>
         </div>
         <ul className="space-y-2 max-h-60 overflow-y-auto">
           {tasks.map((task) => (
-            <li key={task.id} className="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded">
+            <li key={task.id} className="flex justify-between items-center p-2 bg-slate-50 dark:bg-slate-950 rounded border border-slate-200 dark:border-slate-800">
               <div>
-                <span className="dark:text-gray-200 font-medium">{task.name}</span>
-                <span className="text-xs text-gray-500 ml-2">({task.type})</span>
+                <span className="text-slate-800 dark:text-slate-200 font-medium">{task.name}</span>
+                <span className="text-xs text-slate-500 ml-2">({task.type})</span>
               </div>
               <button
                 onClick={() => deleteTask(task.id)}
-                className="text-red-500 hover:text-red-700"
+                className="text-red-600 hover:text-red-700"
               >
                 <Trash2 className="w-4 h-4" />
               </button>

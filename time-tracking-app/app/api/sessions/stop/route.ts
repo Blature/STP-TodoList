@@ -5,6 +5,18 @@ import { WorkLog } from "@/lib/entities/WorkLog";
 import { appendToSheet } from "@/lib/googleSheets";
 import { format } from "date-fns";
 
+type SecondaryTaskInput = {
+  type: string;
+  minutes: number | string;
+  description?: string | null;
+};
+
+type SecondaryTask = {
+  type: string;
+  minutes: number;
+  description?: string | null;
+};
+
 function formatTime(date: Date) {
   return format(date, "HH:mm:ss");
 }
@@ -52,8 +64,13 @@ export async function POST(request: Request) {
     const totalMinutes = Math.max(Math.floor(totalMs / 60000), 1);
 
     // Calculate secondary tasks duration
-    const secTasks: any[] = Array.isArray(secondaryTasks) ? secondaryTasks : [];
-    const secTotal = secTasks.reduce((sum, t) => sum + (parseInt(t.minutes) || 0), 0);
+    const secTasksRaw: SecondaryTaskInput[] = Array.isArray(secondaryTasks) ? secondaryTasks : [];
+    const secTasks: SecondaryTask[] = secTasksRaw.map((task) => ({
+      type: task.type,
+      minutes: parseInt(String(task.minutes), 10) || 0,
+      description: task.description ?? null
+    }));
+    const secTotal = secTasks.reduce((sum, t) => sum + t.minutes, 0);
     const primaryMinutes = Math.max(totalMinutes - secTotal, 1);
 
     // Create WorkLog
@@ -65,9 +82,10 @@ export async function POST(request: Request) {
     workLog.durationMinutes = totalMinutes;
     workLog.description = description || activeSession.description;
     // Safe integer parsing helper
-    const safeInt = (val: any) => {
-      const parsed = parseInt(val);
-      return isNaN(parsed) ? null : parsed;
+    const safeInt = (val: string | number | null | undefined) => {
+      if (val === null || val === undefined) return null;
+      const parsed = parseInt(String(val), 10);
+      return Number.isNaN(parsed) ? null : parsed;
     };
 
     workLog.totalCalls = safeInt(totalCalls);

@@ -23,30 +23,30 @@ export default function AdminPage() {
   if (!isLoggedIn) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <form onSubmit={handleLogin} className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md w-full max-w-sm">
-          <h2 className="text-2xl font-bold mb-6 text-center dark:text-white">Admin Login</h2>
+        <form onSubmit={handleLogin} className="bg-slate-50 dark:bg-slate-900 p-8 rounded-lg shadow-md w-full max-w-sm border border-slate-200 dark:border-slate-800 transition-colors duration-300">
+          <h2 className="text-2xl font-bold mb-6 text-center text-slate-900 dark:text-white">Admin Login</h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1 dark:text-gray-300">Username</label>
+              <label className="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-200">Username</label>
               <input
                 type="text"
-                className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                className="w-full p-2 border rounded border-slate-200 dark:bg-slate-950 dark:border-slate-800 dark:text-slate-100"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1 dark:text-gray-300">Password</label>
+              <label className="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-200">Password</label>
               <input
                 type="password"
-                className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                className="w-full p-2 border rounded border-slate-200 dark:bg-slate-950 dark:border-slate-800 dark:text-slate-100"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
             <button
               type="submit"
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded font-semibold transition-colors"
+              className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded font-semibold transition-colors"
             >
               Login
             </button>
@@ -58,13 +58,13 @@ export default function AdminPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap gap-4 border-b dark:border-gray-700 pb-2">
+      <div className="flex flex-wrap gap-4 border-b border-slate-200 dark:border-slate-800 pb-2">
         <button
           onClick={() => setActiveTab("live")}
           className={`px-4 py-2 rounded-t-lg font-medium transition-colors ${
             activeTab === "live"
-              ? "bg-indigo-600 text-white"
-              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+              ? "bg-red-600 text-white"
+              : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
           }`}
         >
           Live Dashboard
@@ -73,8 +73,8 @@ export default function AdminPage() {
           onClick={() => setActiveTab("manage")}
           className={`px-4 py-2 rounded-t-lg font-medium transition-colors ${
             activeTab === "manage"
-              ? "bg-indigo-600 text-white"
-              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+              ? "bg-red-600 text-white"
+              : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
           }`}
         >
           Manage Entities
@@ -83,15 +83,15 @@ export default function AdminPage() {
           onClick={() => setActiveTab("analytics")}
           className={`px-4 py-2 rounded-t-lg font-medium transition-colors ${
             activeTab === "analytics"
-              ? "bg-indigo-600 text-white"
-              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+              ? "bg-red-600 text-white"
+              : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
           }`}
         >
           Analytics
         </button>
         <button
           onClick={() => setIsLoggedIn(false)}
-          className="ml-auto text-red-500 hover:text-red-700 font-medium"
+          className="ml-auto text-red-600 hover:text-red-700 font-medium"
         >
           Logout
         </button>

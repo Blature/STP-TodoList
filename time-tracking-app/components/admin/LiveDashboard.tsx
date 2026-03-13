@@ -41,35 +41,35 @@ export default function LiveDashboard() {
     };
   }, []);
 
-  if (loading) return <div>Loading live sessions...</div>;
+  if (loading) return <div className="text-slate-700 dark:text-slate-300">Loading live sessions...</div>;
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-      <h3 className="text-xl font-bold mb-4 dark:text-white">Active Sessions</h3>
+    <div className="bg-slate-50 dark:bg-slate-900 p-6 rounded-lg shadow border border-slate-200 dark:border-slate-800 transition-colors duration-300">
+      <h3 className="text-xl font-bold mb-4 text-slate-900 dark:text-white">Active Sessions</h3>
       
       {sessions.length === 0 ? (
-        <p className="text-gray-500 dark:text-gray-400">No active sessions.</p>
+        <p className="text-slate-500 dark:text-slate-400">No active sessions.</p>
       ) : (
         <div className="space-y-4">
           {sessions.map((session) => (
-            <div key={session.id} className="p-4 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg border border-indigo-100 dark:border-indigo-800">
+            <div key={session.id} className="p-4 bg-slate-50 dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800">
               <div className="flex justify-between items-start">
                 <div>
-                  <h4 className="font-bold text-lg dark:text-indigo-200">{session.employee.name}</h4>
-                  <p className="text-gray-600 dark:text-gray-300">
+                  <h4 className="font-bold text-lg text-slate-900 dark:text-white">{session.employee.name}</h4>
+                  <p className="text-slate-600 dark:text-slate-300">
                     Task: <span className="font-medium">{session.task.name}</span>
                   </p>
                   {session.description && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 italic">
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 italic">
                       &quot;{session.description}&quot;
                     </p>
                   )}
                 </div>
                 <div className="text-right">
-                  <div className="text-indigo-600 dark:text-indigo-400 font-bold text-xl">
+                  <div className="text-red-600 dark:text-red-400 font-bold text-xl">
                     Started at {format(new Date(session.startTime), "HH:mm")}
                   </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                  <div className="text-xs text-slate-500 dark:text-slate-400">
                     {/* Could add elapsed time here if needed */}
                   </div>
                 </div>

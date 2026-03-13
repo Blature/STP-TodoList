@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { getDataSource } from "@/lib/db";
 import { ActiveSession } from "@/lib/entities/ActiveSession";
-import { Employee } from "@/lib/entities/Employee";
-import { Task } from "@/lib/entities/Task";
 
 export async function POST(request: Request) {
   try {

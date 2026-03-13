@@ -40,7 +40,7 @@ export class WorkLog {
   answeredCalls: number | null;
 
   @Column({ type: "jsonb", nullable: true })
-  secondaryTasks: Record<string, any>[] | null; // JSON array of secondary tasks
+  secondaryTasks: { type: string; minutes: number; description?: string | null }[] | null; // JSON array of secondary tasks
 
   @CreateDateColumn()
   createdAt: Date;

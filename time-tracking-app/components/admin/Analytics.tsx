@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTheme } from "next-themes";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { format, startOfMonth, endOfMonth, parseISO } from "date-fns";
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8", "#82ca9d"];
+const COLORS = ["#ef4444", "#f87171", "#fca5a5", "#fecaca", "#dc2626", "#b91c1c"];
 
 interface Log {
   id: string;
@@ -22,12 +23,24 @@ interface Employee {
 }
 
 export default function Analytics() {
+  const { resolvedTheme } = useTheme();
   const [logs, setLogs] = useState<Log[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"));
   const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), "yyyy-MM-dd"));
   const [loading, setLoading] = useState(false);
+  const isDark = resolvedTheme === "dark";
+  const axisColor = isDark ? "#cbd5e1" : "#475569";
+  const gridColor = isDark ? "#1e293b" : "#e2e8f0";
+  const tooltipBackground = isDark ? "#0f172a" : "#ffffff";
+  const tooltipBorder = isDark ? "#1e293b" : "#e2e8f0";
+  const tooltipText = isDark ? "#e2e8f0" : "#0f172a";
+  const renderPieLabel = ({ x, y, name, percent }: { x: number; y: number; name: string; percent: number }) => (
+    <text x={x} y={y} fill={axisColor} textAnchor="middle" dominantBaseline="central" fontSize={12}>
+      {`${name} ${(percent * 100).toFixed(0)}%`}
+    </text>
+  );
 
   useEffect(() => {
     // Wrap async call
@@ -96,11 +109,11 @@ export default function Analytics() {
   return (
     <div className="space-y-8">
       {/* Filters */}
-      <div className="bg-white dark:bg-navy-800 p-6 rounded-lg shadow border dark:border-navy-700 flex flex-wrap gap-4 items-end">
+      <div className="bg-slate-50 dark:bg-slate-900 p-6 rounded-lg shadow border border-slate-200 dark:border-slate-800 flex flex-wrap gap-4 items-end transition-colors duration-300">
         <div>
-          <label className="block text-sm font-medium mb-1 dark:text-navy-light">Employee</label>
+          <label className="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-200">Employee</label>
           <select
-            className="p-2 border rounded dark:bg-navy-900 dark:border-navy-700 dark:text-white"
+            className="p-2 border rounded border-slate-200 dark:bg-slate-950 dark:border-slate-800 dark:text-slate-100"
             value={selectedEmployee}
             onChange={(e) => setSelectedEmployee(e.target.value)}
           >
@@ -111,19 +124,19 @@ export default function Analytics() {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1 dark:text-navy-light">Start Date</label>
+          <label className="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-200">Start Date</label>
           <input
             type="date"
-            className="p-2 border rounded dark:bg-navy-900 dark:border-navy-700 dark:text-white"
+            className="p-2 border rounded border-slate-200 dark:bg-slate-950 dark:border-slate-800 dark:text-slate-100"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1 dark:text-navy-light">End Date</label>
+          <label className="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-200">End Date</label>
           <input
             type="date"
-            className="p-2 border rounded dark:bg-navy-900 dark:border-navy-700 dark:text-white"
+            className="p-2 border rounded border-slate-200 dark:bg-slate-950 dark:border-slate-800 dark:text-slate-100"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
           />
@@ -132,35 +145,35 @@ export default function Analytics() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white dark:bg-navy-800 p-6 rounded-lg shadow border dark:border-navy-700">
-          <h3 className="text-gray-500 dark:text-muted text-sm uppercase">Total Hours</h3>
-          <p className="text-3xl font-bold dark:text-navy-light">{totalHours.toFixed(1)}h</p>
+        <div className="bg-slate-50 dark:bg-slate-900 p-6 rounded-lg shadow border border-slate-200 dark:border-slate-800 transition-colors duration-300">
+          <h3 className="text-slate-500 dark:text-slate-400 text-sm uppercase">Total Hours</h3>
+          <p className="text-3xl font-bold text-slate-900 dark:text-white">{totalHours.toFixed(1)}h</p>
         </div>
-        <div className="bg-white dark:bg-navy-800 p-6 rounded-lg shadow border dark:border-navy-700">
-           <h3 className="text-gray-500 dark:text-muted text-sm uppercase">Total Tasks</h3>
-           <p className="text-3xl font-bold dark:text-navy-light">{logs.length}</p>
+        <div className="bg-slate-50 dark:bg-slate-900 p-6 rounded-lg shadow border border-slate-200 dark:border-slate-800 transition-colors duration-300">
+           <h3 className="text-slate-500 dark:text-slate-400 text-sm uppercase">Total Tasks</h3>
+           <p className="text-3xl font-bold text-slate-900 dark:text-white">{logs.length}</p>
         </div>
       </div>
 
       {/* Charts */}
       <div className="grid md:grid-cols-2 gap-8">
-        <div className="bg-white dark:bg-navy-800 p-6 rounded-lg shadow border dark:border-navy-700">
-          <h3 className="text-lg font-bold mb-4 dark:text-navy-light">Hours per Day</h3>
+        <div className="bg-slate-50 dark:bg-slate-900 p-6 rounded-lg shadow border border-slate-200 dark:border-slate-800 transition-colors duration-300">
+          <h3 className="text-lg font-bold mb-4 text-slate-900 dark:text-white">Hours per Day</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={barData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="hours" fill="#e63946" />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                <XAxis dataKey="date" tick={{ fill: axisColor, fontSize: 12 }} axisLine={{ stroke: gridColor }} tickLine={{ stroke: gridColor }} />
+                <YAxis tick={{ fill: axisColor, fontSize: 12 }} axisLine={{ stroke: gridColor }} tickLine={{ stroke: gridColor }} />
+                <Tooltip contentStyle={{ backgroundColor: tooltipBackground, borderColor: tooltipBorder, color: tooltipText }} labelStyle={{ color: tooltipText }} itemStyle={{ color: tooltipText }} />
+                <Bar dataKey="hours" fill="#ef4444" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-navy-800 p-6 rounded-lg shadow border dark:border-navy-700">
-          <h3 className="text-lg font-bold mb-4 dark:text-navy-light">Task Distribution</h3>
+        <div className="bg-slate-50 dark:bg-slate-900 p-6 rounded-lg shadow border border-slate-200 dark:border-slate-800 transition-colors duration-300">
+          <h3 className="text-lg font-bold mb-4 text-slate-900 dark:text-white">Task Distribution</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -169,16 +182,15 @@ export default function Analytics() {
                   cx="50%"
                   cy="50%"
                   outerRadius={80}
-                  fill="#8884d8"
                   dataKey="value"
-                  label
+                  label={renderPieLabel}
                 >
                   {pieData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip />
-                <Legend />
+                <Tooltip contentStyle={{ backgroundColor: tooltipBackground, borderColor: tooltipBorder, color: tooltipText }} labelStyle={{ color: tooltipText }} itemStyle={{ color: tooltipText }} />
+                <Legend wrapperStyle={{ color: axisColor }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -186,61 +198,61 @@ export default function Analytics() {
       </div>
 
       {/* Detailed Logs Table */}
-      <div className="bg-white dark:bg-navy-800 rounded-lg shadow border dark:border-navy-700 overflow-hidden">
-        <div className="p-6 border-b dark:border-navy-700">
-          <h3 className="text-lg font-bold dark:text-navy-light">Detailed Logs</h3>
+      <div className="bg-slate-50 dark:bg-slate-900 rounded-lg shadow border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors duration-300">
+        <div className="p-6 border-b border-slate-200 dark:border-slate-800">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white">Detailed Logs</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-gray-50 dark:bg-navy-900">
+            <thead className="bg-slate-50 dark:bg-slate-950">
               <tr>
-                <th className="p-4 font-semibold text-gray-600 dark:text-navy-light">Date</th>
-                <th className="p-4 font-semibold text-gray-600 dark:text-navy-light">Main Task</th>
-                <th className="p-4 font-semibold text-gray-600 dark:text-navy-light">Start Time</th>
-                <th className="p-4 font-semibold text-gray-600 dark:text-navy-light">Duration</th>
-                <th className="p-4 font-semibold text-gray-600 dark:text-navy-light">Secondary Tasks</th>
-                <th className="p-4 font-semibold text-gray-600 dark:text-navy-light">Description</th>
+                <th className="p-4 font-semibold text-slate-600 dark:text-slate-200">Date</th>
+                <th className="p-4 font-semibold text-slate-600 dark:text-slate-200">Main Task</th>
+                <th className="p-4 font-semibold text-slate-600 dark:text-slate-200">Start Time</th>
+                <th className="p-4 font-semibold text-slate-600 dark:text-slate-200">Duration</th>
+                <th className="p-4 font-semibold text-slate-600 dark:text-slate-200">Secondary Tasks</th>
+                <th className="p-4 font-semibold text-slate-600 dark:text-slate-200">Description</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-navy-700">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
               {logs.map((log) => (
-                <tr key={log.id} className="hover:bg-gray-50 dark:hover:bg-navy-900/50">
-                  <td className="p-4 dark:text-gray-300">
+                <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-950/60">
+                  <td className="p-4 text-slate-700 dark:text-slate-300">
                     {format(parseISO(log.startTime), "yyyy-MM-dd")}
                   </td>
-                  <td className="p-4 dark:text-gray-300">
-                    <span className="font-medium text-navy-800 dark:text-white">
+                  <td className="p-4 text-slate-700 dark:text-slate-300">
+                    <span className="font-medium text-slate-900 dark:text-white">
                       {log.mainTask?.name}
                     </span>
                   </td>
-                  <td className="p-4 dark:text-gray-300">
+                  <td className="p-4 text-slate-700 dark:text-slate-300">
                     {format(parseISO(log.startTime), "HH:mm")}
                   </td>
-                  <td className="p-4 dark:text-gray-300">
+                  <td className="p-4 text-slate-700 dark:text-slate-300">
                     {log.durationMinutes} min
                   </td>
                   <td className="p-4">
                     {log.secondaryTasks && log.secondaryTasks.length > 0 ? (
                       <div className="space-y-1">
                         {log.secondaryTasks.map((st, i) => (
-                          <div key={i} className="text-xs bg-gray-100 dark:bg-navy-900 dark:text-gray-300 p-1 rounded border dark:border-navy-700">
-                            <span className="font-bold text-red-500">{st.type}</span>: {st.minutes}m
-                            {st.description && <span className="italic text-gray-500 ml-1">({st.description})</span>}
+                          <div key={i} className="text-xs bg-slate-100 dark:bg-slate-950 text-slate-700 dark:text-slate-300 p-1 rounded border border-slate-200 dark:border-slate-800">
+                            <span className="font-bold text-red-600">{st.type}</span>: {st.minutes}m
+                            {st.description && <span className="italic text-slate-500 ml-1">({st.description})</span>}
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <span className="text-gray-400 text-sm">-</span>
+                      <span className="text-slate-400 text-sm">-</span>
                     )}
                   </td>
-                  <td className="p-4 dark:text-gray-300 text-sm max-w-xs truncate" title={log.description || ""}>
+                  <td className="p-4 text-slate-700 dark:text-slate-300 text-sm max-w-xs truncate" title={log.description || ""}>
                     {log.description || "-"}
                   </td>
                 </tr>
               ))}
               {logs.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="p-8 text-center text-gray-500 dark:text-muted">
+                  <td colSpan={6} className="p-8 text-center text-slate-500 dark:text-slate-400">
                     No logs found for selected criteria
                   </td>
                 </tr>

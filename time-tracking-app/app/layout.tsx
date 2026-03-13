@@ -1,17 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
-import { Providers } from "./providers";
+import { ThemeProvider } from "next-themes";
 import Header from "@/components/Header";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const appSans = localFont({
+  src: [
+    { path: "../public/fonts/3-Cairo Regular.ttf", weight: "400", style: "normal" },
+    { path: "../public/fonts/4-Cairo SemiBold.ttf", weight: "600", style: "normal" },
+    { path: "../public/fonts/5-Cairo Bold.ttf", weight: "700", style: "normal" }
+  ],
+  variable: "--font-sans",
+  display: "swap"
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const appMono = localFont({
+  src: [{ path: "../public/fonts/Gilroy-Regular.ttf", weight: "400", style: "normal" }],
+  variable: "--font-mono",
+  display: "swap"
 });
 
 export const metadata: Metadata = {
@@ -25,16 +31,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300`}
+        className={`${appSans.variable} ${appMono.variable} antialiased min-h-screen bg-slate-950 text-slate-100`}
       >
-        <Providers>
+        <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark" enableSystem={false}>
           <Header />
           <main className="container mx-auto p-4">
             {children}
           </main>
-        </Providers>
+        </ThemeProvider>
       </body>
     </html>
   );
